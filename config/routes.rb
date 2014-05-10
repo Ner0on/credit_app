@@ -1,5 +1,7 @@
 CreditApp::Application.routes.draw do
-  root 'credit#index'
+  resources :credits
+ root 'credits#new'
+
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 

@@ -1,0 +1,74 @@
+<div class="container well" style="width:50%;">
+	<h3>Credit form</h3>
+	<hr>
+	
+		<%= form_for :credit, url: credits_path do |f| %>
+		<div class="span3">
+			<%= f.text_field :name, placeholder: 'Name' %>
+			<%= f.text_field :last_name, placeholder: 'Last name' %>
+			<%= f.text_field :personal_id, placeholder: 'Personal ID' %>
+			<%= f.text_field :email, placeholder: 'email' %>
+			<%= f.text_field :phone, placeholder: 'Phone' %>
+		</div>
+
+		<div class="span3">
+			<%= f.text_field :credit_sum, placeholder:'credit sum',style: 'width:100px' %>
+			<br>
+			<%= f.select(:credit_period, options_for_select([['6 months',6],['1 year',12],['2 years',24],['3 years',36],['4 years',48],['5 years',60]], :selected => params[:credit_period]), {}, :style => "width:115px;")%>
+			<%= f.text_field :credit_start_date, style: 'display:none', value: DateTime.current %>
+			<%= label_tag :intress %>
+			<%= text_field_tag(:intress, '25%', style:'width:30px', disabled:'disabled')%>
+			<br>
+			<%= text_field_tag(:month_sum, 'Monthly sum',style:'width:100px', disabled:'disabled')%>
+			<br>
+			<%= text_field_tag(:intress_sum, 'Intress sum',style:'width:100px', disabled:'disabled')%>
+			<br>
+			<br>
+			<a href="#" onClick="return false" class="btn" style="text-align:center" id="payment_graphic">See graphic</a>
+			<br>
+		</div>
+
+		<div class="span9">
+			<br>
+			<table class="table table-bordered hide" id="payments_table">
+				<thead>
+					<tr>
+						<th> Date </th>
+						<th> Balance </th>
+						<th> Principal repayment </th>
+						<th> Interest payment </th>
+						<th> Total </th>
+					</tr>
+				</thead>
+				<tbody id="payments_tbody">
+					
+				</tbody>
+			</table>
+			<%= f.submit "Send form", class: 'btn btn-success'%>
+		</div>
+			
+		<% end %>	
+</div>
+
+<script>
+	$(document).ready(function(){
+		
+		$('#credit_credit_sum').blur(function(){
+			
+			var credit_sum  = $('#credit_credit_sum').val();
+
+			if (credit_sum > 10000){
+				
+				alert('Credit sum cant be more than 10 000')
+
+			}else if(credit_sum < 600){
+				
+				alert('Credit sum cant be less than 600')
+			}
+		});
+	})
+	$('#payment_graphic').on('click',function(){
+			$("#payments_table").show()
+
+	})
+</script>
