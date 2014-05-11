@@ -18,4 +18,12 @@ class CreditsController < ApplicationController
 	def credit_params
 		params.require(:credit).permit(:name, :last_name, :email, :phone, :personal_id, :credit_sum, :credit_period, :credit_start_date, :credit_intress)
 	end
+
+	def graphic_rendering
+
+		result = 'ok'
+
+		render :json => result
+
+	end
 end
