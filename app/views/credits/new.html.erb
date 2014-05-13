@@ -87,7 +87,7 @@
 					data:{ credit_sum: credit_sum, credit_date: credit_date, credit_period: credit_period, credit_intress: credit_intress},
 					success:function(data){
 
-						$("#graphic_template").tmpl(data).appendTo('payments_tbody')
+						$("#graphic_template").tmpl(data).appendTo('#payments_tbody')
 						$("#payments_table").show()
 					}
 				})
@@ -109,10 +109,7 @@
 		if( credit_sum > 0 && credit_sum != "" ){	
 			// Monthly Paympent sum
 			var rank = Math.pow(( 1 + credit_intress / credit_period),credit_period);
-			
-			var raw_monthly_payment = credit_sum*(credit_intress/credit_period)/(1-(1/rank));
-			var monthly_payment = raw_monthly_payment;
-
+			var monthly_payment = credit_sum*(credit_intress/credit_period)/(1-(1/rank));
 			$('#month_sum').val(monthly_payment.toFixed(2))
 			
 			// Intress from all sum
@@ -144,7 +141,10 @@
 </script>
 <script type="text/x-jquery-tmpl" id="graphic_template">
 	<tr>
-		<td></td>
-		<td></td>
+		<td>${payment_date}</td>
+		<td>${balance}</td>
+		<td>${principal_repayment}</td>
+		<td>${intress_payment}</td>
+		<td>${monthly_payment}</td>
 	</tr>
 </script>
