@@ -1,14 +1,23 @@
 class CreditsController < ApplicationController
 include ActionView::Helpers::NumberHelper
+	
+	# def show
+	# 	@credit = Credit.find(params[:id])
+	# 	@payments = Payment.where(credit_id:params[:id])
+	# 	respond_to do |format|
+	#     	format.pdf{ render template: "credits/invoices/invoice", :pdf => 'crdit_invoice' }
+	#     end
+	# end
 
 	def new
 		@credit = Credit.new
 	end
 	
 	def create	
-		
+
 		@credit = Credit.new(credit_params)
 		@credit.save
+
 		credit_period = credit_params[:credit_period].to_i
 		credit_start_date = Date.parse(credit_params[:credit_start_date])
 		credit_sum = credit_params[:credit_sum].to_f
@@ -19,6 +28,7 @@ include ActionView::Helpers::NumberHelper
 
 		if @payment
 			render :new
+			Notifier.credit_attachment(@credit,data).deliver
 		else
 			render :index
 		end
@@ -52,7 +62,7 @@ include ActionView::Helpers::NumberHelper
 			principal_repayment	= monthly_payment - percent
 			
 			data = []
-
+			
 			credit_period.times do
 				
 				credit_start_date = credit_start_date + 1.month
@@ -60,7 +70,7 @@ include ActionView::Helpers::NumberHelper
 				data << {
 					payment_date: credit_start_date.strftime('%d.%m.%Y'),
 					monthly_paymnet_total: number_to_currency(monthly_payment, precision: 2, :unit => ""),
-					payment_balance: number_to_currency(balance, precision: 2, :unit => ""),
+					payment_balance: number_to_currency(balance, precision: 2, :unit => "", :delimiter => ""),
 					intress_payment: number_to_currency(percent, precision: 2, :unit => ""),
 					princial_repayment: number_to_currency(principal_repayment, precision: 2, :unit => "")
 				}
@@ -78,9 +88,5 @@ include ActionView::Helpers::NumberHelper
 
 	def credit_params
 		params.require(:credit).permit(:name, :last_name, :email, :phone, :personal_id, :credit_sum, :credit_period, :credit_start_date, :credit_intress)
-	end
-
-	# def payment_params
-	# 	params.require(:credit).except(:name, :last_name, :email, :phone, :personal_id).permit(:credit_sum, :credit_period, :credit_start_date, :credit_intress)
-	# end	
+	end	
 end

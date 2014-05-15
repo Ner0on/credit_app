@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title></title>
+	<link rel="stylesheet" href="">
+</head>
+<body>
+	<p><b>Name:</b> <%= @credit.name %> </p>
+	<p><b>Last name:</b> <%= @credit.last_name %> </p>
+	<p><b>Personal ID:</b> <%= @credit.personal_id %> </p>
+	<p><b>Email</b> : <%= @credit.email %> </p>
+	<p><b>Phone</b> : <%= @credit.phone %> </p>
+	<p><b>Credit sum:</b> <%= @credit.credit_sum %> </p>
+	<p><b>Credit period:</b> <%= @credit.credit_period %> months</p>
+	<p><b>Credit intress:</b> <%= @credit.credit_intress%>%</p>
+	
+	<table class="table table-bordered" style="width:100%;">
+		<thead>
+			<tr>
+				<td>Date</td>
+				<td>Balance</td>
+				<td>Principal repayment</td>
+				<td>Interest payment</td>
+				<td>Total</td>
+			</tr>
+		</thead>
+		<tbody>
+			<% @payments.each do |p|%>
+				<tr>
+					<td><%= p[:payment_date] %></td>
+					<td><%= p[:payment_balance] %></td>
+					<td><%= p[:princial_repayment] %></td>
+					<td><%= p[:intress_payment] %></td>
+					<td><%= p[:monthly_paymnet_total] %></td>
+				</tr>
+			<% end %>
+		</tbody>
+		<tfoot>
+				
+		</tfoot>
+	</table>
+	
+</body>
+</html>

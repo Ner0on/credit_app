@@ -37,8 +37,10 @@ end
 group :development do
   gem "better_errors"
 end
+
 gem "binding_of_caller"
 gem 'wkhtmltopdf-binary'
+gem 'wicked_pdf'
 # Use ActiveModel has_secure_password
 # gem 'bcrypt-ruby', '~> 3.1.2'
 
