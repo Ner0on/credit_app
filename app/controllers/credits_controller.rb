@@ -46,16 +46,35 @@ include ActionView::Helpers::NumberHelper
 		render :json => data
 
 	end
+
+	def calculating_payments()
+		
+		credit_period = params[:credit_period].to_i
+		credit_start_date = Date.parse(params[:credit_date])
+		credit_sum = params[:credit_sum].to_f
+		credit_intress = params[:credit_intress].to_f	
+
+		data = calculating_graphic(credit_period,credit_start_date,credit_sum,credit_intress)
+
+		monthly_paymnet_total = data[0][:monthly_paymnet_total].to_f
+		raw_inress_sum = (monthly_paymnet_total * credit_period) - credit_sum
+		inress_sum  = number_to_currency(raw_inress_sum, precision: 2,:unit => "", :delimiter => "" )
+		render :json => {monthly_paymnet_total: monthly_paymnet_total, inress_sum: inress_sum}
+	end
 	
 	def calculating_graphic(credit_period,credit_start_date,credit_sum,credit_intress)
 			
 			credit_intress = 0.25
 
+
 			# monhtly payment
-			rank = ( 1 + credit_intress / credit_period )**credit_period
-			monthly_payment = credit_sum * (credit_intress / credit_period) / ( 1 - ( 1 / rank ))
+			year_percent = credit_intress / 12 
+			rank = ( 1 + year_percent )**credit_period - 1
+			monthly_payment = credit_sum * ( year_percent + (year_percent / rank))
+
+			intress_payment = monthly_payment * credit_period - credit_sum
 			# percent payment
-			percent = credit_sum * credit_intress / credit_period
+			percent = credit_sum * year_percent
 			# balance 
 			balance = credit_sum
 			# main part of payment
@@ -69,19 +88,20 @@ include ActionView::Helpers::NumberHelper
 
 				data << {
 					payment_date: credit_start_date.strftime('%d.%m.%Y'),
-					monthly_paymnet_total: number_to_currency(monthly_payment, precision: 2, :unit => ""),
+					monthly_paymnet_total: number_to_currency(monthly_payment, precision: 2, :unit => "", :delimiter => ""),
 					payment_balance: number_to_currency(balance, precision: 2, :unit => "", :delimiter => ""),
-					intress_payment: number_to_currency(percent, precision: 2, :unit => ""),
-					princial_repayment: number_to_currency(principal_repayment, precision: 2, :unit => "")
+					intress_payment: number_to_currency(percent, precision: 2, :unit => "", :delimiter => ""),
+					princial_repayment: number_to_currency(principal_repayment, precision: 2, :unit => "", :delimiter => "")
 				}
 				# Recounting with new balance
 				balance -= principal_repayment
-				percent = balance * credit_intress / credit_period
+				percent = balance * year_percent
 				principal_repayment = monthly_payment - percent
 
 			end
 
 			return data
+			
 	end
 	
 	private

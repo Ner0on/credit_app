@@ -2,6 +2,7 @@ CreditApp::Application.routes.draw do
   resources :credits
  root 'credits#new'
  match 'graphic_rendering' => 'credits#graphic_rendering', via: :post, as: :graphic_rendering
+ match 'calculating_payments' => 'credits#calculating_payments', via: :post, as: :calculating_payments
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 

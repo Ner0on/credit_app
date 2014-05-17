@@ -70,6 +70,7 @@
 			}
 		});
 	})
+
 	$('#payment_graphic').on('click',function(){
 
 		var credit_sum = $('#credit_credit_sum').val();
@@ -78,26 +79,15 @@
 		var credit_intress = 0.25;
 
 			if (credit_sum != "" && credit_sum > 0){
-				
 				$('#payments_tbody').empty()
-				
-				$.ajax({
-					type:'POST',
-					url:'<%= graphic_rendering_path %>',
-					data:{ credit_sum: credit_sum, credit_date: credit_date, credit_period: credit_period, credit_intress: credit_intress},
-					success:function(data){
-
-						$("#graphic_template").tmpl(data).appendTo('#payments_tbody')
-						$("#payments_table").show()
-					}
-				})
-					
+				graphic_rendering(credit_sum,credit_date,credit_period,credit_intress)		
 			}else{
 				alert('Credit sum can`t be empty')
 			}
 			
 
 	})
+
 	$('#payment_count').on('click',function(){
 		
 		var credit_sum = $('#credit_credit_sum').val();
@@ -107,21 +97,32 @@
 		
 				
 		if( credit_sum > 0 && credit_sum != "" ){	
-			// Monthly Paympent sum
-			var rank = Math.pow(( 1 + credit_intress / credit_period),credit_period);
-			var monthly_payment = credit_sum*(credit_intress/credit_period)/(1-(1/rank));
-			$('#month_sum').val(monthly_payment.toFixed(2))
-			
-			// Intress from all sum
-			var raw_intress_sum = monthly_payment * credit_period - credit_sum
-			var years = credit_period / 12
-			var intress_sum = raw_intress_sum * years
-
-			$('#intress_sum').val(intress_sum.toFixed(2))	
+			$.ajax({
+				type:'POST',
+				url:'<%= calculating_payments_path %>',
+				data:{credit_sum: credit_sum, credit_date: credit_date, credit_period: credit_period, credit_intress: credit_intress},
+				success:function(data){
+					$('#month_sum').val(data.monthly_paymnet_total)
+					$('#intress_sum').val(data.inress_sum)
+				}
+			})
 		}else{
 			alert('Credit sum can`t be empty')
 		}
 	})	
+	
+	function graphic_rendering(credit_sum,credit_date,credit_period,credit_intress){	
+		$.ajax({
+			type:'POST',
+			url:'<%= graphic_rendering_path %>',
+			data:{ credit_sum: credit_sum, credit_date: credit_date, credit_period: credit_period, credit_intress: credit_intress},
+			success:function(data){
+
+				$("#graphic_template").tmpl(data).appendTo('#payments_tbody')
+				$("#payments_table").show()
+			}
+		})
+	}
 </script>
 <script type="text/x-jquery-tmpl" id="graphic_template">
 	<tr>
